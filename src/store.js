@@ -1,17 +1,22 @@
 // store.js
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import favoritesReducer from './favorites';
+
+const rootReducer = combineReducers({
+  favorites: favoritesReducer,
+  // Add other reducers here if needed
+});
 
 const loadState = () => {
   try {
     const serializedState = localStorage.getItem('favorites');
     if (serializedState === null) {
-      return []; // Return an empty array as the default initial state
+      return { favorites: [], userRatings: {} }; // Return an empty state object
     }
     const parsedState = JSON.parse(serializedState);
-    return Array.isArray(parsedState) ? parsedState : [];
+    return parsedState;
   } catch (err) {
-    return []; // Return an empty array on error
+    return { favorites: [], userRatings: {} }; // Return an empty state object on error
   }
 };
 
@@ -25,7 +30,7 @@ const saveState = (state) => {
 };
 
 const store = createStore(
-  favoritesReducer,
+  rootReducer,
   loadState(), // Load initial state from localStorage
 );
 

@@ -1,28 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Typography, Card, CardContent, CardMedia, CardActions, Button } from "@mui/material";
+import React,{useState, useEffect} from "react";
+import { Typography, Card, CardContent, CardMedia, CardActions, Button, Rating } from "@mui/material";
 import { connect } from 'react-redux';
-import { addToFavorites, removeFromFavorites } from '../../src/favorites';
+import { addToFavorites, removeFromFavorites, addUserRating } from '../../src/favorites';
 
-const MovieCard = ({ movie, favorites, addToFavorites, removeFromFavorites, isFavoritesPage }) => {
+const MovieCard = ({ movie, addToFavorites, removeFromFavorites, addUserRating, isFavoritesPage, userRatings, favorites }) => {
   const { id, title, poster_path, overview, release_date, vote_average } = movie;
   const posterBaseUrl = "https://image.tmdb.org/t/p/w500";
 
-  const isInFavorites = favorites.some(favorite => favorite.id === id);
+  const isInFavorites = favorites.some((favMovie) => favMovie.id === id);
 
   const [addedToFavorites, setAddedToFavorites] = useState(isInFavorites);
 
   useEffect(() => {
     setAddedToFavorites(isInFavorites);
   }, [isInFavorites]);
-
+  
   const handleAddToFavorites = () => {
     addToFavorites(movie);
-    setAddedToFavorites(true);
+    setAddedToFavorites(true)
   };
 
   const handleRemoveFromFavorites = () => {
     removeFromFavorites(id);
-    setAddedToFavorites(false);
+    setAddedToFavorites(true)
+  };
+
+  const handleRatingChange = (event, newValue) => {
+    addUserRating(id, newValue);
   };
 
   return (
@@ -34,7 +38,7 @@ const MovieCard = ({ movie, favorites, addToFavorites, removeFromFavorites, isFa
         sx={{ width: '150px', height: '225px', objectFit: 'cover', borderRadius: '5px', marginRight: '10px' }}
       />
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <Typography variant="h6" color='primary' sx={{ fontSize: '1.5em', marginBottom: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight:'600'}}>
+        <Typography variant="h6" color='primary' sx={{ fontSize: '1.5em', marginBottom: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: '600' }}>
           {title}
         </Typography>
         <Typography sx={{ fontSize: '0.9em', marginBottom: '3px', color: '#e57373' }}>
@@ -45,6 +49,14 @@ const MovieCard = ({ movie, favorites, addToFavorites, removeFromFavorites, isFa
         </Typography>
         <Typography sx={{ fontSize: '0.9em', color: '#333', flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {overview}
+        </Typography>
+        <Typography component="legend">
+        <Rating
+          name={`userRating-${id}`}
+          value={userRatings && userRatings[id] ? userRatings[id] : 0}
+          precision={0.5}
+          onChange={handleRatingChange}
+        />
         </Typography>
         <CardActions>
           {isFavoritesPage ? (
@@ -66,8 +78,9 @@ const MovieCard = ({ movie, favorites, addToFavorites, removeFromFavorites, isFa
   );
 };
 
-const mapStateToProps = state => ({
-  favorites: state, // Assuming your favorites state is stored in the Redux store
+const mapStateToProps = (state) => ({
+  favorites: state.favorites.favorites,
+  userRatings: state.favorites.userRatings,
 });
 
-export default connect(mapStateToProps, { addToFavorites, removeFromFavorites })(MovieCard);
+export default connect(mapStateToProps, { addToFavorites, removeFromFavorites, addUserRating })(MovieCard);

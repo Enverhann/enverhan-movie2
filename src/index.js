@@ -6,7 +6,11 @@ import App from './App';
 import favorites from './favorites';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faStar, faStarHalf } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+library.add(faStar, faStarHalf);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

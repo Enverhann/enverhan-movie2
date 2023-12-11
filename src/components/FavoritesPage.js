@@ -7,7 +7,7 @@ import { removeFromFavorites } from '../../src/favorites';
 
 const FavoritesPage = () => {
   const dispatch = useDispatch();
-  const favorites = useSelector(state => state);
+  const favorites = useSelector(state => state.favorites.favorites);
 
   const handleRemoveFromFavorites = (movieId) => {
     dispatch(removeFromFavorites(movieId));
