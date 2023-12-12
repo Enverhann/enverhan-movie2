@@ -1,9 +1,11 @@
 // store.js
 import { createStore, combineReducers } from 'redux';
 import favoritesReducer from './favorites';
+import authReducer from './auth';
 
 const rootReducer = combineReducers({
   favorites: favoritesReducer,
+  auth:authReducer,
   // Add other reducers here if needed
 });
 
